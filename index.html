@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yudong Luo — Robot Learning</title>
+<meta name="description" content="Yudong Luo — MS AI Engineering at Carnegie Mellon. Robot learning, egocentric manipulation, and vision-language models on real hardware.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#141A21;
+  --paper:#EFF1F3;
+  --panel:#F7F8F9;
+  --rule:#CDD4DA;
+  --rule-soft:#DFE4E8;
+  --muted:#6C7883;
+  --near:#E0512B;
+  --far:#245C9E;
+  --maxw:1120px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+/* calibration grid backdrop */
+.grid-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(var(--rule-soft) 1px,transparent 1px),
+    linear-gradient(90deg,var(--rule-soft) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 100%);
+  opacity:.55;
+}
+main{position:relative;z-index:1}
+
+/* ---------- masthead ---------- */
+header{border-bottom:1px solid var(--rule);background:rgba(239,241,243,.9);backdrop-filter:blur(6px);position:sticky;top:0;z-index:20}
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:14px 0}
+.sig{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;letter-spacing:-.02em}
+nav{display:flex;gap:22px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:.04em}
+nav a{color:var(--muted);text-decoration:none;padding:2px 0;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus-visible{color:var(--ink);border-bottom-color:var(--near)}
+
+/* ---------- hero ---------- */
+.hero{padding:76px 0 56px;display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--near);margin:0 0 18px}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(42px,6.2vw,74px);line-height:1.02;letter-spacing:-.035em;margin:0 0 22px;font-weight:700}
+h1 em{font-style:normal;color:var(--far)}
+.lede{font-size:18px;max-width:46ch;color:#2C353E;margin:0 0 28px}
+.meta{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);line-height:2}
+.meta b{color:var(--ink);font-weight:500}
+
+/* ---------- signature: retarget figure ---------- */
+.figure{position:relative}
+.stage{width:100%;border:1px solid var(--rule);background:var(--panel);border-radius:2px}
+.figcap{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:10px;display:flex;justify-content:space-between;letter-spacing:.03em}
+.figcap span:first-child{color:var(--near)}
+
+/* ---------- measures strip ---------- */
+.strip{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--panel)}
+.measures{display:grid;grid-template-columns:repeat(4,1fr);}
+.m{padding:22px 0 20px;border-right:1px solid var(--rule-soft)}
+.m:last-child{border-right:0}
+.m .v{font-family:'Space Grotesk',sans-serif;font-size:27px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.m .v i{font-style:normal;color:var(--muted);font-size:16px;font-weight:400;margin:0 5px}
+.m .k{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.05em;margin-top:5px}
+
+/* ---------- sections ---------- */
+section{padding:64px 0}
+.sechead{display:flex;align-items:baseline;gap:14px;margin-bottom:34px}
+.sechead h2{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;margin:0}
+.sechead .line{flex:1;height:1px;background:var(--rule)}
+.sechead .n{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--muted)}
+
+/* ---------- work entries ---------- */
+.entry{display:grid;grid-template-columns:150px 1fr;gap:28px;padding:26px 0;border-top:1px solid var(--rule-soft)}
+.entry:first-of-type{border-top:1px solid var(--rule)}
+.when{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);padding-top:4px}
+.when .tag{display:inline-block;margin-top:9px;padding:2px 7px;border:1px solid var(--near);color:var(--near);font-size:10.5px;letter-spacing:.05em}
+.entry h3{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:500;letter-spacing:-.015em;margin:0 0 4px;line-height:1.25}
+.where{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--far);margin:0 0 12px}
+.entry p{margin:0 0 12px;max-width:68ch;color:#2C353E}
+.res{display:flex;flex-wrap:wrap;gap:8px}
+.res span{font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:3px 9px;background:var(--panel);border:1px solid var(--rule-soft)}
+.res span b{font-weight:500;color:var(--near)}
+
+/* ---------- stack ---------- */
+.stack{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--rule)}
+.col{padding:22px 24px;border-right:1px solid var(--rule-soft)}
+.col:last-child{border-right:0}
+.col h4{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--near);margin:0 0 12px;font-weight:400}
+.col ul{margin:0;padding:0;list-style:none;font-size:14.5px;line-height:1.95;color:#2C353E}
+
+/* ---------- media in entries ---------- */
+.shot{margin:14px 0 0;border:1px solid var(--rule);background:var(--panel);border-radius:2px;overflow:hidden}
+.shot img{display:block;width:100%;height:auto}
+.shot figcaption{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);padding:7px 10px;border-top:1px solid var(--rule-soft);letter-spacing:.03em}
+.shots{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin-top:14px;align-items:start}
+.shots .shot{margin:0}
+
+/* ---------- repo link ---------- */
+.repo{display:inline-flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--far);text-decoration:none;margin-top:14px;border-bottom:1px solid var(--rule);padding-bottom:2px}
+.repo:hover,.repo:focus-visible{color:var(--near);border-bottom-color:var(--near)}
+.repo svg{width:14px;height:14px;flex:none}
+
+/* ---------- affiliations ---------- */
+.affil{display:flex;align-items:center;gap:26px;flex-wrap:wrap;margin-top:26px;padding-top:22px;border-top:1px solid var(--rule-soft)}
+.affil img{height:26px;width:auto;opacity:.78;filter:saturate(.85)}
+.affil img.round{height:34px}
+.affil .sep{width:1px;height:26px;background:var(--rule)}
+
+/* ---------- avatar (hero) ---------- */
+.who{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.who img{width:66px;height:66px;border-radius:50%;object-fit:cover;border:1px solid var(--rule);flex:none}
+.who .eyebrow{margin:0}
+
+/* ---------- about / portrait ---------- */
+.about{display:grid;grid-template-columns:186px 1fr;gap:32px;align-items:start}
+.portrait{border:1px solid var(--rule);background:var(--panel);padding:7px}
+.portrait img{display:block;width:100%;height:auto}
+.portrait figcaption{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);padding-top:7px;letter-spacing:.03em}
+.about p{max-width:60ch;color:#2C353E;margin:0 0 14px}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--rule);padding:44px 0 60px;background:var(--panel)}
+.contact{display:flex;flex-wrap:wrap;gap:12px 30px;align-items:center}
+.contact a{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule);padding-bottom:2px}
+.contact a:hover,.contact a:focus-visible{border-bottom-color:var(--near);color:var(--near)}
+.fine{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--muted);margin-top:26px}
+
+@media(max-width:880px){
+  .shots{grid-template-columns:1fr}
+  .about{grid-template-columns:1fr;gap:24px}
+  .portrait{max-width:200px}
+  .hero{grid-template-columns:1fr;gap:38px;padding:52px 0 44px}
+  .measures{grid-template-columns:repeat(2,1fr)}
+  .m{border-bottom:1px solid var(--rule-soft)}
+  .m:nth-child(2){border-right:0}
+  .stack{grid-template-columns:1fr}
+  .col{border-right:0;border-bottom:1px solid var(--rule-soft)}
+  .entry{grid-template-columns:1fr;gap:10px}
+  nav{gap:16px}
+}
+@media(max-width:560px){
+  nav a:nth-child(1),nav a:nth-child(2){display:none}
+  .wrap{padding:0 20px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header>
+  <div class="wrap bar">
+    <div class="sig">Yudong Luo</div>
+    <nav>
+      <a href="#work">Work</a>
+      <a href="#stack">Stack</a>
+      <a href="#writing">Publications</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap hero">
+  <div>
+    <div class="who">
+      <img src="img/avatar.jpg" alt="Yudong Luo">
+      <p class="eyebrow">Robot learning · Carnegie Mellon</p>
+    </div>
+    <h1>Teaching robots<br>from how <em>people</em><br>already move.</h1>
+    <p class="lede">I work on manipulation policies that learn from egocentric human video and run on real hardware — across different robot bodies, and on the compute a robot can actually carry.</p>
+    <p class="meta">
+      <b>MS Artificial Intelligence Engineering</b>, Carnegie Mellon University<br>
+      Robotics &amp; Control Systems · graduating December 2026<br>
+      Currently at <b>Safe AI Lab × Bosch Research</b> and <b>AirLab × Denso</b>
+    </p>
+    <div class="affil">
+      <img src="img/cmu-ri.png" alt="Carnegie Mellon University Robotics Institute">
+      <span class="sep"></span>
+      <img class="round" src="img/uestc.png" alt="University of Electronic Science and Technology of China">
+    </div>
+  </div>
+
+  <figure class="figure" style="margin:0">
+    <svg class="stage" viewBox="0 0 420 300" role="img" aria-label="Diagram: a human hand pose is reduced to an approach direction and contact points, which are then used to place a parallel-jaw gripper.">
+      <defs>
+        <pattern id="fine" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M20 0H0V20" fill="none" stroke="#DFE4E8" stroke-width="1"/>
+        </pattern>
+        <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M0 0 L10 5 L0 10 z" fill="#E0512B"/>
+        </marker>
+      </defs>
+      <rect width="420" height="300" fill="url(#fine)"/>
+
+      <!-- axis ticks -->
+      <g stroke="#CDD4DA" stroke-width="1">
+        <path d="M28 272 H392"/><path d="M28 272 V28"/>
+      </g>
+      <g fill="#6C7883" font-family="IBM Plex Mono, monospace" font-size="8">
+        <text x="26" y="286">0</text><text x="200" y="286">x</text><text x="14" y="150">z</text>
+      </g>
+
+      <!-- object -->
+      <g class="obj">
+        <ellipse cx="212" cy="214" rx="34" ry="11" fill="#245C9E" opacity=".1"/>
+        <path d="M186 214 q0-46 26-46 q26 0 26 46 z" fill="#245C9E" opacity=".16" stroke="#245C9E" stroke-width="1.2"/>
+      </g>
+
+      <!-- human hand: simplified skeleton -->
+      <g class="hand" stroke="#141A21" stroke-width="1.6" fill="none" stroke-linecap="round">
+        <path d="M150 96 L172 118 M172 118 L196 132"/>
+        <path d="M150 96 L164 78 M164 78 L180 70"/>
+        <path d="M150 96 L156 72 M156 72 L164 56"/>
+        <path d="M150 96 L146 70 M146 70 L146 52"/>
+        <path d="M150 96 L136 74 M136 74 L128 58"/>
+        <circle cx="150" cy="96" r="3.6" fill="#141A21"/>
+      </g>
+      <g class="hand-pts" fill="#E0512B">
+        <circle cx="196" cy="132" r="3.4"/><circle cx="180" cy="70" r="3.4"/>
+        <circle cx="164" cy="56" r="3.4"/><circle cx="146" cy="52" r="3.4"/>
+        <circle cx="128" cy="58" r="3.4"/>
+      </g>
+
+      <!-- approach vector -->
+      <g class="vec">
+        <path d="M158 104 L200 160" stroke="#E0512B" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+      </g>
+
+      <!-- gripper -->
+      <g class="grip" stroke="#245C9E" stroke-width="2.4" fill="none" stroke-linecap="square">
+        <path d="M212 128 V150"/>
+        <path d="M186 150 H238"/>
+        <path d="M190 150 V186"/>
+        <path d="M234 150 V186"/>
+      </g>
+      <g class="grip-pts" fill="#E0512B">
+        <circle cx="190" cy="186" r="3.4"/><circle cx="234" cy="186" r="3.4"/>
+      </g>
+
+      <!-- labels -->
+      <g font-family="IBM Plex Mono, monospace" font-size="9" fill="#6C7883">
+        <text class="l1" x="112" y="40">MANO hand pose</text>
+        <text class="l2" x="252" y="112">approach + contacts</text>
+        <text class="l3" x="252" y="200">gripper configuration</text>
+      </g>
+    </svg>
+    <figcaption class="figcap">
+      <span>fig. 01</span>
+      <span>human demonstration → executable grasp</span>
+    </figcaption>
+  </figure>
+</div>
+
+<div class="strip">
+  <div class="wrap measures">
+    <div class="m"><div class="v">61.5<i>→</i>84.6<i style="font-size:13px">%</i></div><div class="k">CROSS-EMBODIMENT PRETRAIN</div></div>
+    <div class="m"><div class="v">32B<i>→</i>2B</div><div class="k">VLM DISTILLED FOR EDGE</div></div>
+    <div class="m"><div class="v">83<i style="font-size:13px">%</i></div><div class="k">GRASP SUCCESS, 5 OBJECTS</div></div>
+    <div class="m"><div class="v">3.79<i style="font-size:13px">mm</i></div><div class="k">SNAP INSERTION ACCURACY</div></div>
+  </div>
+</div>
+
+<section id="work" class="wrap">
+  <div class="sechead"><h2>Selected work</h2><div class="line"></div><span class="n">2022 — present</span></div>
+
+  <article class="entry">
+    <div class="when">Apr 2026 — present<span class="tag">ICRA 2027 · in prep</span></div>
+    <div>
+      <h3>EgoX — cross-embodiment learning for manipulation</h3>
+      <p class="where">Safe AI Lab × Bosch Research · co-author</p>
+      <p>Different robots see, sense, and move differently, which makes it hard to train one policy on all of their data. I brought two of those bodies — a Galaxea R1 Lite and an xArm — into a shared modality interface, collected egocentric demonstrations, and evaluated the finetuned policy on real hardware.</p>
+      <div class="res">
+        <span>scoop success <b>61.5% → 84.6%</b></span>
+        <span>task score <b>72.3% → 96.9%</b></span>
+        <span>out-of-distribution sorting <b>1/7 → 5/7</b></span>
+      </div>
+      <figure class="shot">
+        <img src="img/egox.png" alt="MXT+ architecture: per-embodiment modality tokenizers feed a shared transformer encoder and decoder, with separate action experts for end-effector, torso, and hand poses, plus dream experts predicting future image latents.">
+        <figcaption>MXT+ — modality tokenizers per embodiment, one shared trunk, modular action experts</figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <article class="entry">
+    <div class="when">Jan — Jun 2026</div>
+    <div>
+      <h3>Distilling a 32B vision-language model to 2B</h3>
+      <p class="where">Carnegie Mellon · spatial reasoning on edge devices</p>
+      <p>A robot in an elevator has no network. I built a 50k-sample teacher pipeline and compared four distillation objectives against two parameter budgets. The finding was not the one I expected: full fine-tuning made the student <em>worse</em> than before training, and LoRA's real value was preventing that collapse rather than adding new ability.</p>
+      <div class="res">
+        <span>CV-Bench <b>75.40%</b></span>
+        <span>depth sub-task <b>90.0%</b></span>
+        <span>full fine-tune fell <b>29 pts</b> below baseline</span>
+      </div>
+      <!-- Uncomment once the repo has a README with setup + results:
+      <a class="repo" href="https://github.com/yud0ng/Qwen3_VL_Distill" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        github.com/yud0ng/Qwen3_VL_Distill
+      </a>
+      -->
+    </div>
+  </article>
+
+  <article class="entry">
+    <div class="when">Jan — Jun 2026</div>
+    <div>
+      <h3>Grasping from egocentric human video</h3>
+      <p class="where">Personal project · deployed on a robot arm</p>
+      <p>Human hands and parallel-jaw grippers have nothing in common mechanically, so copying the hand pose directly does not work. I take only the approach direction and contact regions from the reconstructed MANO hand, and let Contact-GraspNet decide the gripper configuration — the intent transfers, the kinematics do not have to.</p>
+      <div class="res">
+        <span>success <b>83%</b> across 5 object types</span>
+        <span>up to <b>+20%</b> per object from human priors</span>
+      </div>
+      <div class="shots">
+        <figure class="shot">
+          <img src="img/grasp-pipeline.png" alt="Three-layer system diagram: a perception layer with RealSense depth, Moondream2 VLM and EdgeTAM; a planning layer running hand reconstruction, contact descriptors and Contact-GraspNet; an action layer with IK solving and trajectory execution on an SO-101 arm.">
+          <figcaption>perception → planning → action</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="img/grasp-demo.gif" onerror="this.onerror=null;this.src='img/grasp-demo.png'" loading="lazy" alt="Screen recording of the running system: camera views on the left, the planned grasp pose visualised on the arm in RViz, and the execution log on the right.">
+          <figcaption>running on hardware</figcaption>
+        </figure>
+      </div>
+      <a class="repo" href="https://github.com/yud0ng/Generalisable-Grasping" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        github.com/yud0ng/Generalisable-Grasping
+      </a>
+    </div>
+  </article>
+
+  <article class="entry">
+    <div class="when">May 2026 — present<span class="tag">IROS 2026</span></div>
+    <div>
+      <h3>Millimetre-tolerance assembly with residual RL</h3>
+      <p class="where">RoCo task board benchmark · team of three, method design</p>
+      <p>Snap-fit parts need about 2 mm of alignment to seat, which open-loop behavior cloning cannot hold. Three diffusion heads split by end-phase motion handle the coarse trajectory; a small residual policy trained with TD3 in Isaac Sim supplies the last few millimetres in task space.</p>
+      <div class="res">
+        <span>snap insertion at <b>3.79 mm / 2.95°</b></span>
+        <span>scripted baseline <b>6/9</b></span>
+        <span>monolithic ACT <b>0/9</b></span>
+      </div>
+    </div>
+  </article>
+
+  <article class="entry">
+    <div class="when">Sep 2025 — Mar 2026</div>
+    <div>
+      <h3>Multi-camera visual odometry</h3>
+      <p class="where">AirLab × Denso</p>
+      <p>Extended MAC-VO from a fixed stereo rig to arbitrary N-camera configurations, and unified several pretrained optical flow networks behind one uncertainty-aware frontend. Dynamic objects are masked out by semantic segmentation, and those masks then train a keypoint selector.</p>
+      <div class="res"><span>VGGT · UFM · RoMaV2 under one interface</span></div>
+    </div>
+  </article>
+
+  <article class="entry">
+    <div class="when">Sep — Dec 2025</div>
+    <div>
+      <h3>Faster generative policies</h3>
+      <p class="where">Carnegie Mellon · Push-T benchmark</p>
+      <p>Diffusion policies are accurate but slow, which is a problem when the controller has a deadline. Beta-distribution timestep sampling made single-step inference viable rather than a fallback.</p>
+      <div class="res"><span>single-step success <b>0.13 → 0.82</b></span></div>
+    </div>
+  </article>
+</section>
+
+<section id="stack" class="wrap">
+  <div class="sechead"><h2>What I work with</h2><div class="line"></div><span class="n">tools, not badges</span></div>
+  <div class="stack">
+    <div class="col">
+      <h4>Policy &amp; learning</h4>
+      <ul>
+        <li>PyTorch · HuggingFace · PEFT</li>
+        <li>Diffusion &amp; flow-matching policies</li>
+        <li>Vision-language-action models</li>
+        <li>Knowledge distillation · LoRA</li>
+        <li>Residual RL · TD3 · behavior cloning</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>Perception &amp; 3D</h4>
+      <ul>
+        <li>Multi-view geometry · triangulation</li>
+        <li>Camera calibration · stereo</li>
+        <li>6-DoF pose · point clouds</li>
+        <li>Segmentation · optical flow</li>
+        <li>OpenCV · Open3D · PCL · RealSense</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>Systems</h4>
+      <ul>
+        <li>ROS · Isaac Sim / Lab · MuJoCo</li>
+        <li>vLLM · DeepSpeed · CUDA</li>
+        <li>Python · C/C++ · embedded (STM32)</li>
+        <li>Docker · Linux · Git</li>
+        <li>PySpark · Kafka · PostgreSQL</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="writing" class="wrap">
+  <div class="sechead"><h2>Publications &amp; patent</h2><div class="line"></div><span class="n">02</span></div>
+  <article class="entry">
+    <div class="when">2026<span class="tag">in preparation</span></div>
+    <div>
+      <h3>EgoX: Egocentric Cross-Embodiment Learning for Versatile Manipulation</h3>
+      <p class="where">Co-author · target ICRA 2027</p>
+      <p>A framework that records human and robot demonstrations in one egocentric format and trains a modular transformer across both.</p>
+    </div>
+  </article>
+  <article class="entry">
+    <div class="when">Filed Dec 2024<span class="tag">pending</span></div>
+    <div>
+      <h3>Nighttime Traffic Scene Salient Object Detection with Improved YOLOv9</h3>
+      <p class="where">Qin, L.; Luo, Y. · China patent application 2024119132237</p>
+      <p>Saliency-aware detection with low-level feature fusion, aimed at degraded visibility in night driving.</p>
+    </div>
+  </article>
+</section>
+</main>
+
+<section id="about" class="wrap">
+  <div class="sechead"><h2>Off the clock</h2><div class="line"></div><span class="n">—</span></div>
+  <div class="about">
+    <figure class="portrait">
+      <img src="img/portrait.jpg" alt="Yudong Luo standing at an overlook above a canyon, holding a camera.">
+      <figcaption>Yellowstone, 2026</figcaption>
+    </figure>
+    <div>
+      <p>I take photographs, mostly landscapes, mostly on road trips out of Pittsburgh. It turns out to be useful practice for the day job: framing a shot and calibrating a camera rig are the same problem viewed from opposite ends — one asks what the sensor should see, the other asks what it actually saw.</p>
+      <p>Before robots I studied communications engineering in Chengdu, spent a year at the University of Glasgow, and worked on nighttime object detection for driving scenes — which is where the patent came from.</p>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="sechead" style="margin-bottom:26px"><h2>Get in touch</h2><div class="line"></div><span class="n">open to 2027 new grad roles</span></div>
+    <div class="contact">
+      <a href="mailto:yudongluo.cmu@gmail.com">yudongluo.cmu@gmail.com</a>
+      <a href="https://github.com/yud0ng" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/yudong-luo" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="resume.pdf">Résumé (PDF)</a>
+    </div>
+    <p class="fine">Pittsburgh, PA · Looking for work in robot learning, manipulation, and perception, starting 2027.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var svg = document.querySelector('.stage');
+  if (!svg) return;
+
+  var groups = {
+    hand:   svg.querySelector('.hand'),
+    hpts:   svg.querySelector('.hand-pts'),
+    vec:    svg.querySelector('.vec'),
+    grip:   svg.querySelector('.grip'),
+    gpts:   svg.querySelector('.grip-pts'),
+    l1:     svg.querySelector('.l1'),
+    l2:     svg.querySelector('.l2'),
+    l3:     svg.querySelector('.l3')
+  };
+  var order = ['hand','hpts','l1','vec','l2','grip','gpts','l3'];
+  order.forEach(function(k){ if(groups[k]) groups[k].style.opacity = 0; });
+
+  function play(){
+    order.forEach(function(k,i){
+      var el = groups[k];
+      if(!el) return;
+      el.style.transition = 'opacity .5s ease';
+      setTimeout(function(){ el.style.opacity = 1; }, 220 + i*380);
+    });
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ play(); io.disconnect(); }
+    });
+  }, {threshold:.3});
+  io.observe(svg);
+})();
+</script>
+</body>
+</html>
