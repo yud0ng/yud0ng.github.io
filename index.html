@@ -123,12 +123,8 @@ section{padding:64px 0}
 .who img{width:66px;height:66px;border-radius:50%;object-fit:cover;border:1px solid var(--rule);flex:none}
 .who .eyebrow{margin:0}
 
-/* ---------- about / portrait ---------- */
-.about{display:grid;grid-template-columns:186px 1fr;gap:32px;align-items:start}
-.portrait{border:1px solid var(--rule);background:var(--panel);padding:7px}
-.portrait img{display:block;width:100%;height:auto}
-.portrait figcaption{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);padding-top:7px;letter-spacing:.03em}
-.about p{max-width:60ch;color:#2C353E;margin:0 0 14px}
+/* ---------- about ---------- */
+.about-text p{max-width:68ch;color:#2C353E;margin:0}
 
 /* ---------- footer ---------- */
 footer{border-top:1px solid var(--rule);padding:44px 0 60px;background:var(--panel)}
@@ -139,8 +135,6 @@ footer{border-top:1px solid var(--rule);padding:44px 0 60px;background:var(--pan
 
 @media(max-width:880px){
   .shots{grid-template-columns:1fr}
-  .about{grid-template-columns:1fr;gap:24px}
-  .portrait{max-width:200px}
   .hero{grid-template-columns:1fr;gap:38px;padding:52px 0 44px}
   .measures{grid-template-columns:repeat(2,1fr)}
   .m{border-bottom:1px solid var(--rule-soft)}
@@ -270,8 +264,8 @@ footer{border-top:1px solid var(--rule);padding:44px 0 60px;background:var(--pan
 <div class="strip">
   <div class="wrap measures">
     <div class="m"><div class="v">61.5<i>→</i>84.6<i style="font-size:13px">%</i></div><div class="k">CROSS-EMBODIMENT PRETRAIN</div></div>
-    <div class="m"><div class="v">32B<i>→</i>2B</div><div class="k">VLM DISTILLED FOR EDGE</div></div>
     <div class="m"><div class="v">83<i style="font-size:13px">%</i></div><div class="k">GRASP SUCCESS, 5 OBJECTS</div></div>
+    <div class="m"><div class="v">32B<i>→</i>2B</div><div class="k">VLM DISTILLED FOR EDGE</div></div>
     <div class="m"><div class="v">3.79<i style="font-size:13px">mm</i></div><div class="k">SNAP INSERTION ACCURACY</div></div>
   </div>
 </div>
@@ -294,26 +288,6 @@ footer{border-top:1px solid var(--rule);padding:44px 0 60px;background:var(--pan
         <img src="img/egox.png" alt="MXT+ architecture: per-embodiment modality tokenizers feed a shared transformer encoder and decoder, with separate action experts for end-effector, torso, and hand poses, plus dream experts predicting future image latents.">
         <figcaption>MXT+ — modality tokenizers per embodiment, one shared trunk, modular action experts</figcaption>
       </figure>
-    </div>
-  </article>
-
-  <article class="entry">
-    <div class="when">Jan — Jun 2026</div>
-    <div>
-      <h3>Distilling a 32B vision-language model to 2B</h3>
-      <p class="where">Carnegie Mellon · spatial reasoning on edge devices</p>
-      <p>A robot in an elevator has no network. I built a 50k-sample teacher pipeline and compared four distillation objectives against two parameter budgets. The finding was not the one I expected: full fine-tuning made the student <em>worse</em> than before training, and LoRA's real value was preventing that collapse rather than adding new ability.</p>
-      <div class="res">
-        <span>CV-Bench <b>75.40%</b></span>
-        <span>depth sub-task <b>90.0%</b></span>
-        <span>full fine-tune fell <b>29 pts</b> below baseline</span>
-      </div>
-      <!-- Uncomment once the repo has a README with setup + results:
-      <a class="repo" href="https://github.com/yud0ng/Qwen3_VL_Distill" target="_blank" rel="noopener">
-        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-        github.com/yud0ng/Qwen3_VL_Distill
-      </a>
-      -->
     </div>
   </article>
 
@@ -345,7 +319,27 @@ footer{border-top:1px solid var(--rule);padding:44px 0 60px;background:var(--pan
   </article>
 
   <article class="entry">
-    <div class="when">May 2026 — present<span class="tag">IROS 2026</span></div>
+    <div class="when">Jan — Jun 2026</div>
+    <div>
+      <h3>Distilling a 32B vision-language model to 2B</h3>
+      <p class="where">Carnegie Mellon · spatial reasoning on edge devices</p>
+      <p>A robot in an elevator has no network. I built a 50k-sample teacher pipeline and compared four distillation objectives against two parameter budgets. The finding was not the one I expected: full fine-tuning made the student <em>worse</em> than before training, and LoRA's real value was preventing that collapse rather than adding new ability.</p>
+      <div class="res">
+        <span>CV-Bench <b>75.40%</b></span>
+        <span>depth sub-task <b>90.0%</b></span>
+        <span>full fine-tune fell <b>29 pts</b> below baseline</span>
+      </div>
+      <!-- Uncomment once the repo has a README with setup + results:
+      <a class="repo" href="https://github.com/yud0ng/Qwen3_VL_Distill" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        github.com/yud0ng/Qwen3_VL_Distill
+      </a>
+      -->
+    </div>
+  </article>
+
+  <article class="entry">
+    <div class="when">May 2026 — present<span class="tag">IROS 2026 competition</span></div>
     <div>
       <h3>Millimetre-tolerance assembly with residual RL</h3>
       <p class="where">RoCo task board benchmark · team of three, method design</p>
@@ -437,16 +431,9 @@ footer{border-top:1px solid var(--rule);padding:44px 0 60px;background:var(--pan
 </main>
 
 <section id="about" class="wrap">
-  <div class="sechead"><h2>Off the clock</h2><div class="line"></div><span class="n">—</span></div>
-  <div class="about">
-    <figure class="portrait">
-      <img src="img/portrait.jpg" alt="Yudong Luo standing at an overlook above a canyon, holding a camera.">
-      <figcaption>Yellowstone, 2026</figcaption>
-    </figure>
-    <div>
-      <p>I take photographs, mostly landscapes, mostly on road trips out of Pittsburgh. It turns out to be useful practice for the day job: framing a shot and calibrating a camera rig are the same problem viewed from opposite ends — one asks what the sensor should see, the other asks what it actually saw.</p>
-      <p>Before robots I studied communications engineering in Chengdu, spent a year at the University of Glasgow, and worked on nighttime object detection for driving scenes — which is where the patent came from.</p>
-    </div>
+  <div class="sechead"><h2>Before this</h2><div class="line"></div><span class="n">—</span></div>
+  <div class="about-text">
+    <p>I studied communications engineering in Chengdu before moving to robotics, and worked on nighttime object detection for driving scenes — degraded visibility, low contrast, the cases where a detector usually gives up. That work is where the patent below came from, and it is still roughly what I find interesting: the conditions under which perception stops being reliable.</p>
   </div>
 </section>
 
