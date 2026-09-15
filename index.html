@@ -274,11 +274,11 @@ footer{border-top:1px solid var(--rule);padding:44px 0 60px;background:var(--pan
   <div class="sechead"><h2>Selected work</h2><div class="line"></div><span class="n">2022 — present</span></div>
 
   <article class="entry">
-    <div class="when">Apr 2026 — present<span class="tag">ICRA 2027 · in prep</span></div>
+    <div class="when">Apr 2026 — present<span class="tag">IROS 2026 workshop · oral</span></div>
     <div>
       <h3>EgoX — cross-embodiment learning for manipulation</h3>
       <p class="where">Safe AI Lab × Bosch Research · co-author</p>
-      <p>Different robots see, sense, and move differently, which makes it hard to train one policy on all of their data. I brought two of those bodies — a Galaxea R1 Lite and an xArm — into a shared modality interface, collected egocentric demonstrations, and evaluated the finetuned policy on real hardware.</p>
+      <p>Different robots see, sense, and move differently, which makes it hard to train one policy on all of their data. I built the modality tokenizers and shared encoder-decoder trunk that give them a common interface: images go through a visual backbone shared across every embodiment, state streams through small MLPs, and cross-attention with learnable queries compresses both into a fixed token budget. I also brought the Galaxea R1 Lite into the system — controller, data collection, deployment.</p>
       <div class="res">
         <span>scoop success <b>61.5% → 84.6%</b></span>
         <span>task score <b>72.3% → 96.9%</b></span>
@@ -295,11 +295,11 @@ footer{border-top:1px solid var(--rule);padding:44px 0 60px;background:var(--pan
     <div class="when">Jan — Jun 2026</div>
     <div>
       <h3>Grasping from egocentric human video</h3>
-      <p class="where">Personal project · deployed on a robot arm</p>
-      <p>Human hands and parallel-jaw grippers have nothing in common mechanically, so copying the hand pose directly does not work. I take only the approach direction and contact regions from the reconstructed MANO hand, and let Contact-GraspNet decide the gripper configuration — the intent transfers, the kinematics do not have to.</p>
+      <p class="where">Deployed on a robot arm</p>
+      <p>Human hands and parallel-jaw grippers have nothing in common mechanically, so copying the hand pose directly does not work. I fit a kernel density estimate over contact points and approach poses from human demonstrations, use it as a per-object prior to re-rank Contact-GraspNet candidates, and let the network decide the actual gripper configuration — the intent transfers, the kinematics do not have to. A conversational agent sits in front, turning free-form requests into grounded targets.</p>
       <div class="res">
         <span>success <b>83%</b> across 5 object types</span>
-        <span>up to <b>+20%</b> per object from human priors</span>
+        <span>human prior adds up to <b>+20%</b> on the best object</span>
       </div>
       <div class="shots">
         <figure class="shot">
@@ -341,8 +341,9 @@ footer{border-top:1px solid var(--rule);padding:44px 0 60px;background:var(--pan
     <div>
       <h3>Millimetre-tolerance assembly with residual RL</h3>
       <p class="where">RoCo task board benchmark · team of three, method design</p>
-      <p>Snap-fit parts need about 2 mm of alignment to seat, which open-loop behavior cloning cannot hold. Three diffusion heads split by end-phase motion handle the coarse trajectory; a small residual policy trained with TD3 in Isaac Sim supplies the last few millimetres in task space.</p>
+      <p>Snap-fit parts need about 2 mm of alignment to seat, which open-loop behavior cloning cannot hold. Three diffusion heads split by end-phase motion handle the coarse trajectory; a residual policy trained with TD3 in Isaac Sim supplies the last few millimetres in task space, applied twice — once at grasp, once at placement. The residual transferred better onto a diffusion backbone than onto π0.5.</p>
       <div class="res">
+        <span>best part <b>61% → 91%</b> grasp success</span>
         <span>snap insertion at <b>3.79 mm / 2.95°</b></span>
       </div>
     </div>
@@ -408,10 +409,10 @@ footer{border-top:1px solid var(--rule);padding:44px 0 60px;background:var(--pan
 <section id="writing" class="wrap">
   <div class="sechead"><h2>Publications &amp; patent</h2><div class="line"></div><span class="n">02</span></div>
   <article class="entry">
-    <div class="when">2026<span class="tag">in preparation</span></div>
+    <div class="when">2026<span class="tag">oral</span></div>
     <div>
-      <h3>EgoX: Egocentric Cross-Embodiment Learning for Versatile Manipulation</h3>
-      <p class="where">Co-author · target ICRA 2027</p>
+      <h3>Egocentric Cross-Embodiment Manipulation with Embodiment Dreaming</h3>
+      <p class="where">Co-author · IROS 2026 Workshop (oral) · full paper in preparation, target ICLR 2027</p>
       <p>A framework that records human and robot demonstrations in one egocentric format and trains a modular transformer across both.</p>
     </div>
   </article>
